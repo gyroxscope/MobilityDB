@@ -215,9 +215,12 @@ create_trip_internal(LWLINE **lines, const double *maxSpeeds, const int *categor
     {
       p2 = getPoint2d(lines[i]->points, j);
       segLength = hypot(p1.x - p2.x, p1.y - p2.y);
-      if (segLength < P_EPSILON)
-        ereport(ERROR, (errcode(ERRCODE_INTERNAL_ERROR),
-          errmsg("Segment %d of edge %d has zero length", j, i)));
+      if (segLength < P_EPSILON) {
+        p1 = p2;
+        continue;
+/*        ereport(ERROR, (errcode(ERRCODE_INTERNAL_ERROR),
+          errmsg("Segment %d of edge %d has zero length", j, i))); */
+      }
       /* At every fraction there could be a stop event */
       noInstants += (int) ceil(segLength / P_EVENT_LENGTH) * 2;
       p1 = p2;
